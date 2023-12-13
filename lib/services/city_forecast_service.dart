@@ -15,8 +15,7 @@ class CityForecastService {
     return selectedCity;
   }
 
-  Future<List<WeatherModel>> fetchCityForecastData(
-      String cityName, int day) async {
+  Future<List<WeatherModel>> fetchCityForecastData(String cityName) async {
     // Call API
     final Dio dio = Dio();
     final Response response = await dio.get(
@@ -24,7 +23,7 @@ class CityForecastService {
     print(response);
 
     WeatherModel? thisForecastSelectedCity;
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 5; i++) {
       WeatherModel thisForecastSelectedCity =
           WeatherModel(response.toString(), i);
       forecastSelectedCity.add(thisForecastSelectedCity);

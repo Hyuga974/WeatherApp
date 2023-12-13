@@ -43,13 +43,16 @@ class ForecastView extends StackedView<ForecastViewModel> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            const _SearchBox(titleText: "Search forecast's city"),
+            _SearchBox(
+              titleText: "Search forecast's city",
+              searchFunction: viewModel.searchCity,
+            ),
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
                   child: Text(
-                    'Forecast over 7 days',
+                    'Forecast over 7 days for',
                     style: TextStyle(
                       fontSize: 30,
                     ),
@@ -57,76 +60,43 @@ class ForecastView extends StackedView<ForecastViewModel> {
                 ),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(viewModel.getSelectedCity()),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                //   child: Column(children: [
+                //     const Text("Longitude", style: TextStyle(fontSize: 15)),
+                //     Text(
+                //         viewModel.weatehrService.forecastSelectedCity[0].lon ??
+                //             " ??? ",
+                //         style: const TextStyle(fontSize: 15))
+                //   ]),
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                //   child: Column(children: [
+                //     const Text("Latitude",
+                //         style: const TextStyle(fontSize: 15)),
+                //     Text(
+                //         viewModel.weatehrService.forecastSelectedCity[0].lat ??
+                //             " ??? ",
+                //         style: const TextStyle(fontSize: 15))
+                //   ]),
+                // ),
+              ],
+            ),
             Expanded(
               child: ListView.builder(
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, index) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 7),
-                    child: Card(
-                      color: mySecondColor,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: Icon(
-                              Icons.cloud,
-                              color: Color.fromARGB(255, 78, 78, 78),
-                              size: 50,
-                            ),
-                            title: Text("Today",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w400,
-                                )),
-                            subtitle: Text(
-                              viewModel.weatehrService
-                                  .forecastSelectedCity[index].desc as String,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                            trailing: Text(
-                              "?? °C",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 22),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                child: Column(children: [
-                                  Text("Longitude",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15)),
-                                  Text(" ??? ",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15))
-                                ]),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                child: Column(children: [
-                                  Text("Latitude",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15)),
-                                  Text(" ??? ",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15))
-                                ]),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    // CardMeteo(
-                    //     forecastViewModel: viewModel, dayNumber: index)
-                  );
+                  return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 7),
+                      child: CardMeteo(
+                          forecastViewModel: viewModel, dayNumber: index));
                 },
-                itemCount: 7,
+                itemCount: 5,
               ),
             ),
           ],
@@ -153,56 +123,49 @@ class CardMeteo extends StatelessWidget {
   Widget build(BuildContext context) {
     WeatherModel weatherData =
         forecastViewModel.weatehrService.forecastSelectedCity[dayNumber];
-    return const Center(
+    return Center(
       child: Card(
         color: mySecondColor,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: Icon(
-                Icons.cloud,
-                color: Color.fromARGB(255, 78, 78, 78),
-                size: 50,
-              ),
-              title: Text("Today",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                    fontWeight: FontWeight.w400,
-                  )),
-              subtitle: Text(
-                weatherData.desc as String,
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-              trailing: Text(
-                "?? °C",
-                style: TextStyle(color: Colors.white, fontSize: 22),
-              ),
-            ),
+            Text(weatherData.dat ?? "Today",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                )),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(children: [
-                    Text("Longitude",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
-                    Text(" ??? ",
-                        style: TextStyle(color: Colors.white, fontSize: 15))
-                  ]),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(children: [
-                    Text("Latitude",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
-                    Text(" ??? ",
-                        style: TextStyle(color: Colors.white, fontSize: 15))
-                  ]),
+                Image.network(weatherData.imgUrl ?? "", scale: 0.75),
+                Text(
+                  weatherData.temp ?? "?? °C",
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ],
-            )
+            ),
+            Text(
+              weatherData.desc ?? "?????",
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            // ListTile(
+            //   leading: Image.network(weatherData.imgUrl ?? "", scale: 0.30),
+            //   title: Text(weatherData.dat ?? "Today",
+            //       style: const TextStyle(
+            //         color: Colors.white,
+            //         fontSize: 20,
+            //         fontWeight: FontWeight.w400,
+            //       )),
+            //   subtitle: Text(
+            //     weatherData.desc ?? "?????",
+            //     style: const TextStyle(color: Colors.white, fontSize: 18),
+            //   ),
+            //   trailing: Text(
+            //     weatherData.temp ?? "?? °C",
+            //     style: const TextStyle(color: Colors.white, fontSize: 18),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -211,8 +174,10 @@ class CardMeteo extends StatelessWidget {
 }
 
 class _SearchBox extends StatelessWidget {
-  const _SearchBox({super.key, required this.titleText});
+  const _SearchBox(
+      {super.key, required this.titleText, required this.searchFunction});
   final String titleText;
+  final Function searchFunction;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -224,7 +189,7 @@ class _SearchBox extends StatelessWidget {
       ),
       child: TextField(
         onSubmitted: (String value) {
-          print(value);
+          searchFunction(value);
         },
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.all(0),

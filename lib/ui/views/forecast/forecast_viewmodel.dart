@@ -6,14 +6,18 @@ import 'package:stacked/stacked.dart';
 class ForecastViewModel extends BaseViewModel {
   CityForecastService weatehrService = locator<CityForecastService>();
 
-  WeatherModel? getSelectedCity() {
-    return weatehrService.selectedCity;
+  String selectedCity = "No city";
+  List<WeatherModel>? selectedCityForecastWeather;
+
+  String getSelectedCity() {
+    //selectedCity = selectedCityForecastWeather?[0].name as String;
+    return selectedCity;
   }
 
-  List<WeatherModel?> searchCity(String city, day) {
+  List<WeatherModel?> searchCity(String city) {
     weatehrService
-        .fetchCityData(city, day)
-        .then((value) => city = value as String)
+        .fetchCityForecastData(city)
+        .then((value) => selectedCityForecastWeather = value)
         .then((value) => notifyListeners());
     return weatehrService.forecastSelectedCity;
   }

@@ -20,7 +20,7 @@ class SearchCityViewModel extends BaseViewModel {
     selectedCity = city;
     _cityForcastService
         .fetchCityData(city, 0)
-        .then((value) => selectedCityWeather = value as WeatherModel?)
+        .then((value) => selectedCityWeather = value)
         .then((value) => notifyListeners());
     //Forecast here
     return _cityForcastService.selectedCity;
